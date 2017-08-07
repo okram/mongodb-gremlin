@@ -44,7 +44,7 @@
         <commons-cli.version>1.3.1</commons-cli.version>
         <commons-io.version>2.4</commons-io.version>
         <junit.version>4.12</junit.version>
-        <tinkerpop.version>3.2.5</tinkerpop.version>
+        <tinkerpop.version>3.3.0-SNAPSHOT</tinkerpop.version>
         <query.dir>src/test/resources/mongodb/queries</query.dir>
     </properties>
 

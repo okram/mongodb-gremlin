@@ -1,2 +1,5 @@
-# mongodb-gremlin
+image::https://raw.githubusercontent.com/okram/mongodb-gremlin/master/docs/images/mongodb-gremlin-logo.png[MongoDB-Gremlin]
+
+MongoDB-Gremlin
+
 A compiler of MongoDB query documents for the Gremlin traversal machine.

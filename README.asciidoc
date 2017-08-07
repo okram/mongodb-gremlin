@@ -1,4 +1,4 @@
-image::https://raw.githubusercontent.com/okram/mongodb-gremlin/master/docs/images/mongodb-gremlin-logo.png[MongoDB-Gremlin]
+image::https://raw.githubusercontent.com/okram/mongodb-gremlin/73fb15f74d23a544d224e6a1f66e746bd3329e31/docs/images/mongodb-gremlin-logo.png[MongoDB-Gremlin]
 
 MongoDB-Gremlin
 

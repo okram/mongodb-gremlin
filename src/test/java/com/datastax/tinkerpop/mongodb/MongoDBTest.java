@@ -2,6 +2,7 @@ package com.datastax.tinkerpop.mongodb;
 
 import com.datastax.tinkerpop.mongodb.strategy.decoration.MongoDBStrategy;
 import org.apache.tinkerpop.gremlin.structure.Graph;
+import org.apache.tinkerpop.gremlin.tinkergraph.structure.TinkerFactory;
 import org.apache.tinkerpop.gremlin.tinkergraph.structure.TinkerGraph;
 import org.json.simple.parser.JSONParser;
 import org.junit.Test;
@@ -13,9 +14,9 @@ public class MongoDBTest {
 
     @Test
     public void shouldWork() {
-        final Graph graph = TinkerGraph.open();
+        final Graph graph = TinkerFactory.createModern();
         final MongoDBTraversalSource g = graph.traversal(MongoDBTraversalSource.class).withStrategies(new MongoDBStrategy());
-        System.out.println(g.inject("{ name:'marko' }").next());
+        System.out.println(g.find("{ \"name\": \"lop\" }").toList());
 
     }
 

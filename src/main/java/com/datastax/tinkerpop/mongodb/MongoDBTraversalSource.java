@@ -10,6 +10,7 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.process.traversal.step.sideEffect.InjectStep;
 import org.apache.tinkerpop.gremlin.structure.Graph;
+import org.json.simple.JSONObject;
 
 import java.util.Optional;
 
@@ -54,7 +55,7 @@ public class MongoDBTraversalSource implements TraversalSource {
 
     @Override
     public MongoDBTraversalSource withStrategies(TraversalStrategy... traversalStrategies) {
-        TraversalSource.super.withStrategies(traversalStrategies);
+        this.strategies.addStrategies(traversalStrategies);
         return this;
     }
 
@@ -64,11 +65,11 @@ public class MongoDBTraversalSource implements TraversalSource {
         return this;
     }
 
-    public <S> GraphTraversal<S, S> inject(S... starts) {
+    public <S> GraphTraversal<S, JSONObject> find(String queryDocument) {
         final MongoDBTraversalSource clone = this.clone();
-        clone.bytecode.addStep(GraphTraversal.Symbols.inject, starts);
+        clone.bytecode.addStep(GraphTraversal.Symbols.inject, queryDocument);
         final GraphTraversal.Admin<S, S> traversal = new DefaultGraphTraversal<>(new GraphTraversalSource(clone.getGraph(), clone.getStrategies()));
-        return traversal.addStep(new InjectStep<S>(traversal, starts));
+        return (GraphTraversal) traversal.addStep(new InjectStep(traversal, queryDocument));
     }
 
 

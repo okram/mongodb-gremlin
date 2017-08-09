@@ -42,7 +42,7 @@ public final class MongoDBStrategy extends AbstractTraversalStrategy<TraversalSt
         if (!(traversal.getParent() instanceof EmptyStep))
             return;
 
-
+        // get the JSON CRUD document (json) and realize the CRUD operation (type)
         final GraphTraversal.Admin graphTraversal = (GraphTraversal.Admin) traversal;
         final String type = (((InjectStep) graphTraversal.getStartStep()).getInjections()[0]).toString();
         final String json = (((InjectStep) graphTraversal.getStartStep()).getInjections()[1]).toString();
@@ -52,7 +52,10 @@ public final class MongoDBStrategy extends AbstractTraversalStrategy<TraversalSt
         } catch (final ParseException e) {
             throw new IllegalArgumentException(e.getMessage(), e);
         }
+        // don't need the inject()-step anymore. at this point we have an empty traversal that will get built up accordingly
         traversal.removeStep(0);
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////
 
         if (type.equals("insert")) {
             graphTraversal.addStep(new AddVertexStartStep(graphTraversal, (String) query.getOrDefault(T.label.getAccessor(), Vertex.DEFAULT_LABEL)));

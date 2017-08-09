@@ -18,13 +18,14 @@ public class MongoDBTest {
     @Test
     public void shouldWork() throws Exception {
         final Graph graph = TinkerFactory.createModern();
-        final MongoDBTraversalSource db = graph.traversal(MongoDBTraversalSource.class).withStrategies(new MongoDBStrategy());
+        final MongoDBTraversalSource db = graph.traversal(MongoDBTraversalSource.class);
         assertEquals(
                 parser.parse("{\"id\":1,\"created\":{\"id\":3,\"name\":\"lop\",\"lang\":\"java\",\"label\":\"software\"}," +
                         "\"name\":\"marko\",\"label\":\"person\",\"age\":29,\"knows\":[{\"id\":2,\"name\":\"vadas\",\"label\":\"person\",\"age\":27}," +
                         "{\"id\":4,\"created\":[{\"id\":5,\"name\":\"ripple\",\"lang\":\"java\",\"label\":\"software\"}," +
                         "{\"id\":3,\"name\":\"lop\",\"lang\":\"java\",\"label\":\"software\"}],\"name\":\"josh\",\"label\":\"person\",\"age\":32}]}"),
                 parser.parse(db.find("{ \"name\": \"marko\" }").next().toString()));
+        System.out.println(db.find("{\"age\" : {\"$gt\" : 30}}").toList());
 
     }
 

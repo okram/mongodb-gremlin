@@ -1,5 +1,6 @@
 package com.datastax.tinkerpop.mongodb;
 
+import com.datastax.tinkerpop.mongodb.strategy.decoration.MongoDBStrategy;
 import org.apache.tinkerpop.gremlin.process.remote.RemoteConnection;
 import org.apache.tinkerpop.gremlin.process.traversal.Bytecode;
 import org.apache.tinkerpop.gremlin.process.traversal.TraversalSource;
@@ -17,7 +18,7 @@ import java.util.Optional;
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
-public class MongoDBTraversalSource implements TraversalSource {
+public final class MongoDBTraversalSource implements TraversalSource {
 
     protected transient RemoteConnection connection;
     protected final Graph graph;
@@ -27,6 +28,7 @@ public class MongoDBTraversalSource implements TraversalSource {
     public MongoDBTraversalSource(final Graph graph, final TraversalStrategies strategies) {
         this.graph = graph;
         this.strategies = strategies;
+        this.strategies.addStrategies(MongoDBStrategy.instance());
     }
 
     public MongoDBTraversalSource(final Graph graph) {
@@ -61,7 +63,7 @@ public class MongoDBTraversalSource implements TraversalSource {
 
     @Override
     public MongoDBTraversalSource withRemote(final RemoteConnection remoteConnection) {
-        this.connection = connection;
+        this.connection = remoteConnection;
         return this;
     }
 

@@ -42,11 +42,10 @@ public class MongoDBStrategy extends AbstractTraversalStrategy<TraversalStrategy
                 }
                 // create the result document
                 graphTraversal.
-                        emit().
-                        repeat(outE().inV()).
                         until(out().count().is(0)).
+                        repeat(outE().inV()).
                         path().
-                        by(valueMap()).
+                        by(valueMap(true)).
                         by(label());
                 graphTraversal.addStep(new MongoDBStep(graphTraversal));
             } catch (final ParseException e) {

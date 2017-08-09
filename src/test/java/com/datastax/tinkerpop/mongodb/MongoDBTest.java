@@ -3,20 +3,28 @@ package com.datastax.tinkerpop.mongodb;
 import com.datastax.tinkerpop.mongodb.strategy.decoration.MongoDBStrategy;
 import org.apache.tinkerpop.gremlin.structure.Graph;
 import org.apache.tinkerpop.gremlin.tinkergraph.structure.TinkerFactory;
-import org.apache.tinkerpop.gremlin.tinkergraph.structure.TinkerGraph;
 import org.json.simple.parser.JSONParser;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
 public class MongoDBTest {
 
+    private static JSONParser parser = new JSONParser();
+
     @Test
-    public void shouldWork() {
+    public void shouldWork() throws Exception {
         final Graph graph = TinkerFactory.createModern();
-        final MongoDBTraversalSource g = graph.traversal(MongoDBTraversalSource.class).withStrategies(new MongoDBStrategy());
-        System.out.println(g.find("{ \"name\": \"lop\" }").toList());
+        final MongoDBTraversalSource db = graph.traversal(MongoDBTraversalSource.class).withStrategies(new MongoDBStrategy());
+        assertEquals(
+                parser.parse("{\"id\":1,\"created\":{\"id\":3,\"name\":\"lop\",\"lang\":\"java\",\"label\":\"software\"}," +
+                        "\"name\":\"marko\",\"label\":\"person\",\"age\":29,\"knows\":[{\"id\":2,\"name\":\"vadas\",\"label\":\"person\",\"age\":27}," +
+                        "{\"id\":4,\"created\":[{\"id\":5,\"name\":\"ripple\",\"lang\":\"java\",\"label\":\"software\"}," +
+                        "{\"id\":3,\"name\":\"lop\",\"lang\":\"java\",\"label\":\"software\"}],\"name\":\"josh\",\"label\":\"person\",\"age\":32}]}"),
+                parser.parse(db.find("{ \"name\": \"marko\" }").next().toString()));
 
     }
 

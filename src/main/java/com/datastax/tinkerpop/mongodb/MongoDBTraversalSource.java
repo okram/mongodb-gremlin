@@ -27,8 +27,7 @@ public final class MongoDBTraversalSource implements TraversalSource {
 
     public MongoDBTraversalSource(final Graph graph, final TraversalStrategies strategies) {
         this.graph = graph;
-        this.strategies = strategies;
-        this.strategies.addStrategies(MongoDBStrategy.instance());
+        this.strategies = strategies.clone().addStrategies(MongoDBStrategy.instance());
     }
 
     public MongoDBTraversalSource(final Graph graph) {
@@ -67,11 +66,18 @@ public final class MongoDBTraversalSource implements TraversalSource {
         return this;
     }
 
-    public <S> GraphTraversal<S, JSONObject> find(String queryDocument) {
+    public <S> GraphTraversal<S, JSONObject> find(final String queryDocument) {
         final MongoDBTraversalSource clone = this.clone();
-        clone.bytecode.addStep(GraphTraversal.Symbols.inject, queryDocument);
+        clone.bytecode.addStep(GraphTraversal.Symbols.inject, "query", queryDocument);
         final GraphTraversal.Admin<S, S> traversal = new DefaultGraphTraversal<>(new GraphTraversalSource(clone.getGraph(), clone.getStrategies()));
-        return (GraphTraversal) traversal.addStep(new InjectStep(traversal, queryDocument));
+        return (GraphTraversal) traversal.addStep(new InjectStep(traversal, "query", queryDocument));
+    }
+
+    public <S> GraphTraversal<S, JSONObject> insertOne(final String insertDocument) {
+        final MongoDBTraversalSource clone = this.clone();
+        clone.bytecode.addStep(GraphTraversal.Symbols.inject, "insert", insertDocument);
+        final GraphTraversal.Admin<S, S> traversal = new DefaultGraphTraversal<>(new GraphTraversalSource(clone.getGraph(), clone.getStrategies()));
+        return (GraphTraversal) traversal.addStep(new InjectStep(traversal, "insert", insertDocument));
     }
 
 

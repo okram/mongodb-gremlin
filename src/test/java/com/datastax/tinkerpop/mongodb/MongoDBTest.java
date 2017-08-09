@@ -1,6 +1,8 @@
 package com.datastax.tinkerpop.mongodb;
 
-import com.datastax.tinkerpop.mongodb.strategy.decoration.MongoDBStrategy;
+import org.apache.tinkerpop.gremlin.process.traversal.P;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.Graph;
 import org.apache.tinkerpop.gremlin.tinkergraph.structure.TinkerFactory;
 import org.json.simple.parser.JSONParser;
@@ -16,17 +18,41 @@ public class MongoDBTest {
     private static JSONParser parser = new JSONParser();
 
     @Test
-    public void shouldWork() throws Exception {
+    public void shouldSupportFindDocuments() throws Exception {
         final Graph graph = TinkerFactory.createModern();
+        final GraphTraversalSource g = graph.traversal(GraphTraversalSource.class);
         final MongoDBTraversalSource db = graph.traversal(MongoDBTraversalSource.class);
+
+        // test find(name,marko)
         assertEquals(
                 parser.parse("{\"id\":1,\"created\":{\"id\":3,\"name\":\"lop\",\"lang\":\"java\",\"label\":\"software\"}," +
                         "\"name\":\"marko\",\"label\":\"person\",\"age\":29,\"knows\":[{\"id\":2,\"name\":\"vadas\",\"label\":\"person\",\"age\":27}," +
                         "{\"id\":4,\"created\":[{\"id\":5,\"name\":\"ripple\",\"lang\":\"java\",\"label\":\"software\"}," +
                         "{\"id\":3,\"name\":\"lop\",\"lang\":\"java\",\"label\":\"software\"}],\"name\":\"josh\",\"label\":\"person\",\"age\":32}]}"),
                 parser.parse(db.find("{ \"name\": \"marko\" }").next().toString()));
-        System.out.println(db.find("{\"age\" : {\"$gt\" : 30}}").toList());
 
+        compareQueryTraversalSegment(g.V().has("age", P.gt(30)), db.find("{\"age\" : {\"$gt\" : 30}}"));
+        compareQueryTraversalSegment(g.V().has("name", "vadas").has("age", 27), db.find("{\"age\" : 27, \"name\":\"vadas\"}"));
+
+
+    }
+
+    @Test
+    public void shouldSupportInsertDocuments() throws Exception {
+        final Graph graph = TinkerFactory.createModern();
+        final GraphTraversalSource g = graph.traversal(GraphTraversalSource.class);
+        final MongoDBTraversalSource db = graph.traversal(MongoDBTraversalSource.class);
+
+        db.insertOne("{\"name\" : \"stephen\", \"~label\":\"person\"}").iterate();
+        System.out.println(g.V().valueMap().toList());
+    }
+
+    private static void compareQueryTraversalSegment(GraphTraversal<?, ?> gremlinTraversal, GraphTraversal<?, ?> mongoTraversal) {
+        gremlinTraversal.iterate();
+        mongoTraversal.iterate();
+        for (int i = 0; i < mongoTraversal.asAdmin().getSteps().size() - 1; i++) {
+            assertEquals(mongoTraversal.asAdmin().getSteps().get(i), gremlinTraversal.asAdmin().getSteps().get(i));
+        }
     }
 
     @Test

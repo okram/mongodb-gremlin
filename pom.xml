@@ -23,7 +23,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.datastax</groupId>
+    <groupId>com.datastax.tinkerpop</groupId>
     <artifactId>mongodb-gremlin</artifactId>
     <version>0.1-SNAPSHOT</version>
     <name>MongoDB-Gremlin: Compiler for MongoDB to the Gremlin Traversal Machine</name>

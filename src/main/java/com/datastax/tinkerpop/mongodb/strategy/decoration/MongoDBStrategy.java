@@ -120,7 +120,13 @@ public final class MongoDBStrategy extends AbstractTraversalStrategy<TraversalSt
                 traversal.V().hasId(map.get(T.id.getAccessor()));
             else
                 traversal.addV((String) map.getOrDefault(T.label.getAccessor(), Vertex.DEFAULT_LABEL));
+        } else {
+            if (map.containsKey(T.id.getAccessor()))
+                traversal.property(T.id, map.get(T.id.getAccessor()));
+            if (map.containsKey(T.label.getAccessor()))
+                traversal.property(T.label, map.get(T.label.getAccessor()));
         }
+        ///////
         for (final Map.Entry<String, Object> entry : (Set<Map.Entry<String, Object>>) map.entrySet()) {
             final String label = entry.getKey();
             if (label.equals(T.label.getAccessor()) || label.equals(T.id.getAccessor()))

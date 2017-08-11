@@ -12,6 +12,8 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.process.traversal.step.sideEffect.InjectStep;
 import org.apache.tinkerpop.gremlin.structure.Graph;
+import org.apache.tinkerpop.gremlin.structure.Transaction;
+import org.apache.tinkerpop.gremlin.structure.util.StringFactory;
 import org.json.simple.JSONObject;
 
 import java.util.Optional;
@@ -92,5 +94,19 @@ public final class MongoDBTraversalSource implements TraversalSource {
         } catch (final CloneNotSupportedException e) {
             throw new IllegalStateException(e.getMessage(), e);
         }
+    }
+
+    public Transaction tx() {
+        return this.graph.tx();
+    }
+
+    @Override
+    public void close() throws Exception {
+        if (this.connection != null) this.connection.close();
+    }
+
+    @Override
+    public String toString() {
+        return StringFactory.traversalSourceString(this);
     }
 }

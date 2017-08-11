@@ -1,13 +1,16 @@
 package com.datastax.tinkerpop.mongodb;
 
 import org.apache.tinkerpop.gremlin.process.traversal.P;
-import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
+import org.apache.tinkerpop.gremlin.process.traversal.Traversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.Graph;
+import org.apache.tinkerpop.gremlin.structure.T;
 import org.apache.tinkerpop.gremlin.tinkergraph.structure.TinkerFactory;
 import org.json.simple.parser.JSONParser;
 import org.junit.Test;
 
+import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.inV;
+import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.outV;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -43,13 +46,15 @@ public class MongoDBTest {
         final GraphTraversalSource g = graph.traversal(GraphTraversalSource.class);
         final MongoDBTraversalSource db = graph.traversal(MongoDBTraversalSource.class);
 
-        db.insertOne("{\"name\" : \"stephen\", \"~label\":\"person\", \"hobbies\":[\"art\",\"emails\",\"lame stuff\"], \"created\" : {\"name\":\"Gremlin DSL\"}}").iterate();
-        System.out.println(g.V().valueMap(true).toList());
+        System.out.println(db.insertOne("{\"name\" : \"stephen\", \"~label\":\"person\", \"hobbies\":[\"art\",\"emails\",\"lame stuff\"], " +
+                "\"created\" : {\"name\":\"Gremlin DSL\"}," +
+                "\"likes\" : [{\"name\":\"Bob\", \"~label\":\"android\"},{\"name\":\"marko\",\"~id\":1}]}").toList());
+        System.out.println(g.E().project("a", "b", "c").by(outV().values("name")).by(T.label).by(inV().values("name")).toList());
         System.out.println("##########");
         System.out.println(db.find("{\"name\" : \"stephen\"}").next());
     }
 
-    private static void compareQueryTraversalSegment(GraphTraversal<?, ?> gremlinTraversal, GraphTraversal<?, ?> mongoTraversal) {
+    private static void compareQueryTraversalSegment(Traversal<?, ?> gremlinTraversal, Traversal<?, ?> mongoTraversal) {
         gremlinTraversal.iterate();
         mongoTraversal.iterate();
         for (int i = 0; i < mongoTraversal.asAdmin().getSteps().size() - 1; i++) {

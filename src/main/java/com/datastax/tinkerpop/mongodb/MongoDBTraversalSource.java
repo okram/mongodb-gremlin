@@ -3,6 +3,7 @@ package com.datastax.tinkerpop.mongodb;
 import com.datastax.tinkerpop.mongodb.strategy.decoration.MongoDBStrategy;
 import org.apache.tinkerpop.gremlin.process.remote.RemoteConnection;
 import org.apache.tinkerpop.gremlin.process.traversal.Bytecode;
+import org.apache.tinkerpop.gremlin.process.traversal.Traversal;
 import org.apache.tinkerpop.gremlin.process.traversal.TraversalSource;
 import org.apache.tinkerpop.gremlin.process.traversal.TraversalStrategies;
 import org.apache.tinkerpop.gremlin.process.traversal.TraversalStrategy;
@@ -66,14 +67,14 @@ public final class MongoDBTraversalSource implements TraversalSource {
         return this;
     }
 
-    public <S> GraphTraversal<S, JSONObject> find(final String queryDocument) {
+    public <S> Traversal<S, JSONObject> find(final String queryDocument) {
         final MongoDBTraversalSource clone = this.clone();
         clone.bytecode.addStep(GraphTraversal.Symbols.inject, "query", queryDocument);
         final GraphTraversal.Admin<S, S> traversal = new DefaultGraphTraversal<>(new GraphTraversalSource(clone.getGraph(), clone.getStrategies()));
         return (GraphTraversal) traversal.addStep(new InjectStep(traversal, "query", queryDocument));
     }
 
-    public <S> GraphTraversal<S, JSONObject> insertOne(final String insertDocument) {
+    public <S> Traversal<S, JSONObject> insertOne(final String insertDocument) {
         final MongoDBTraversalSource clone = this.clone();
         clone.bytecode.addStep(GraphTraversal.Symbols.inject, "insert", insertDocument);
         final GraphTraversal.Admin<S, S> traversal = new DefaultGraphTraversal<>(new GraphTraversalSource(clone.getGraph(), clone.getStrategies()));

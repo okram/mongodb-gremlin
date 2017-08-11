@@ -1,4 +1,4 @@
-package com.datastax.tinkerpop.mongodb.step;
+package com.datastax.tinkerpop.mongodb.step.map;
 
 import org.apache.tinkerpop.gremlin.process.traversal.Path;
 import org.apache.tinkerpop.gremlin.process.traversal.Traversal;
@@ -16,9 +16,9 @@ import java.util.function.BinaryOperator;
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
-public final class MongoDBStep extends ReducingBarrierStep<Path, JSONObject> {
+public final class MongoDBQueryStep extends ReducingBarrierStep<Path, JSONObject> {
 
-    public MongoDBStep(final Traversal.Admin traversal) {
+    public MongoDBQueryStep(final Traversal.Admin traversal) {
         super(traversal);
         this.setSeedSupplier(JSONObject::new);
         this.setReducingBiOperator(JSONMaker.instance());
@@ -29,11 +29,10 @@ public final class MongoDBStep extends ReducingBarrierStep<Path, JSONObject> {
         final JSONObject root = new JSONObject();
         JSONObject currentNode = root;
         for (final Object object : traverser.get()) {
-            if (object instanceof Map) {
+            if (object instanceof Map)
                 currentNode.putAll((Map) object);
-            } else if (object instanceof String) {
+            else if (object instanceof String)
                 currentNode.put(object, currentNode = new JSONObject());
-            }
         }
         return root;
     }
@@ -81,7 +80,7 @@ public final class MongoDBStep extends ReducingBarrierStep<Path, JSONObject> {
             return apply(new JSONObject(), object);
         }
 
-        private JSONObject findById(final JSONArray array, final JSONObject object) {
+        private static JSONObject findById(final JSONArray array, final JSONObject object) {
             if (object.containsKey(T.id)) {
                 final Object id = object.get(T.id);
                 for (final Object temp : array) {

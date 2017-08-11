@@ -43,8 +43,10 @@ public class MongoDBTest {
         final GraphTraversalSource g = graph.traversal(GraphTraversalSource.class);
         final MongoDBTraversalSource db = graph.traversal(MongoDBTraversalSource.class);
 
-        db.insertOne("{\"name\" : \"stephen\", \"~label\":\"person\"}").iterate();
+        db.insertOne("{\"name\" : \"stephen\", \"~label\":\"person\", \"hobbies\":[\"art\",\"emails\",\"lame stuff\"], \"created\" : {\"name\":\"Gremlin DSL\"}}").iterate();
         System.out.println(g.V().valueMap(true).toList());
+        System.out.println("##########");
+        System.out.println(db.find("{\"name\" : \"stephen\"}").next());
     }
 
     private static void compareQueryTraversalSegment(GraphTraversal<?, ?> gremlinTraversal, GraphTraversal<?, ?> mongoTraversal) {

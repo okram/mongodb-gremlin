@@ -13,6 +13,7 @@ import org.apache.tinkerpop.gremlin.process.traversal.step.util.EmptyStep;
 import org.apache.tinkerpop.gremlin.process.traversal.strategy.AbstractTraversalStrategy;
 import org.apache.tinkerpop.gremlin.structure.T;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.apache.tinkerpop.gremlin.structure.VertexProperty;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -21,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.addE;
+import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.addV;
 import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.label;
 import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.out;
 import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.outE;
@@ -59,19 +62,8 @@ public final class MongoDBStrategy extends AbstractTraversalStrategy<TraversalSt
 
         if (type.equals("insert")) {
             graphTraversal.addStep(new AddVertexStartStep(graphTraversal, (String) query.getOrDefault(T.label.getAccessor(), Vertex.DEFAULT_LABEL)));
-            for (final Map.Entry<String, Object> entry : (Set<Map.Entry<String, Object>>) query.entrySet()) {
-                final String label = entry.getKey();
-                if (label.equals(T.label.getAccessor()) || label.equals(T.id.getAccessor()))
-                    continue;
-                final Object value = entry.getValue();
-                if (value instanceof List) {
-
-                } else if (value instanceof Map) {
-
-                } else {
-                    graphTraversal.property(label, value);
-                }
-            }
+            graphTraversal.as("a");
+            processMap(query, graphTraversal);
             System.out.println(graphTraversal);
         } else if (type.equals("query")) {
             // create the query document
@@ -115,6 +107,46 @@ public final class MongoDBStrategy extends AbstractTraversalStrategy<TraversalSt
                 return P.neq(value);
         }
         throw new IllegalArgumentException("Unknown MongoDB Predicate: " + mongoPredicate);
+    }
+
+    private static GraphTraversal processMap(final Map map, final GraphTraversal graphTraversal) {
+        for (final Map.Entry<String, Object> entry : (Set<Map.Entry<String, Object>>) map.entrySet()) {
+            final String label = entry.getKey();
+            if (label.equals(T.label.getAccessor()) || label.equals(T.id.getAccessor()))
+                continue;
+            final Object value = entry.getValue();
+            if (value instanceof List && !((List) value).isEmpty()) {
+                if ('p' == validateList((List) value)) {
+                    for (final Object object : (List) value) {
+                        graphTraversal.property(VertexProperty.Cardinality.list, label, object);
+                    }
+                } else {
+                    graphTraversal.sideEffect(processMap((Map) value, addV().sideEffect(addE(label).from("a")).as("a")));
+                }
+            } else if (value instanceof Map) {
+                graphTraversal.sideEffect(processMap((Map) value, addV().sideEffect(addE(label).from("a")).as("a")));
+            } else {
+                graphTraversal.property(label, value);
+            }
+        }
+        return graphTraversal;
+    }
+
+    private static char validateList(final List list) {
+        if (list.isEmpty())
+            return 'x';
+        if (list.get(0) instanceof List)
+            throw new IllegalArgumentException("Lists can not contain nested lists");
+        char state = list.get(0) instanceof Map ? 'o' : 'p';
+        for (int i = 1; i < list.size(); i++) {
+            if (list.get(i) instanceof Map && 'p' == state)
+                throw new IllegalArgumentException("Lists can only support all objects or all primitives");
+            else if (list.get(i) instanceof List)
+                throw new IllegalArgumentException("Lists can not contain nested lists");
+            else if (!(list.get(i) instanceof Map) && 'o' == state)
+                throw new IllegalArgumentException("Lists can only support all objects or all primitives");
+        }
+        return state;
     }
 
     public static MongoDBStrategy instance() {

@@ -9,8 +9,7 @@ import org.apache.tinkerpop.gremlin.tinkergraph.structure.TinkerFactory;
 import org.json.simple.parser.JSONParser;
 import org.junit.Test;
 
-import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.inV;
-import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.outV;
+import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.*;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -28,10 +27,11 @@ public class MongoDBTest {
 
         // test find(name,marko)
         assertEquals(
-                parser.parse("{\"id\":1,\"created\":{\"id\":3,\"name\":\"lop\",\"lang\":\"java\",\"label\":\"software\"}," +
-                        "\"name\":\"marko\",\"label\":\"person\",\"age\":29,\"knows\":[{\"id\":2,\"name\":\"vadas\",\"label\":\"person\",\"age\":27}," +
-                        "{\"id\":4,\"created\":[{\"id\":5,\"name\":\"ripple\",\"lang\":\"java\",\"label\":\"software\"}," +
-                        "{\"id\":3,\"name\":\"lop\",\"lang\":\"java\",\"label\":\"software\"}],\"name\":\"josh\",\"label\":\"person\",\"age\":32}]}"),
+                parser.parse("{\"~label\":\"person\",\"created\":{\"~label\":\"software\",\"~id\":3,\"name\":\"lop\",\"lang\":\"java\"}," +
+                        "\"~id\":1,\"name\":\"marko\",\"age\":29,\"knows\":[{\"~label\":\"person\",\"~id\":2,\"name\":\"vadas\",\"age\":27}," +
+                        "{\"~label\":\"person\",\"created\":{\"~label\":\"software\",\"~id\":5,\"name\":\"ripple\",\"lang\":\"java\"}," +
+                        "\"~id\":4,\"name\":\"josh\",\"age\":32},{\"~label\":\"person\",\"created\":{\"~label\":\"software\",\"~id\":3,\"name\":\"lop\",\"lang\":\"java\"}," +
+                        "\"~id\":4,\"name\":\"josh\",\"age\":32}]}"),
                 parser.parse(db.find("{ \"name\": \"marko\" }").next().toString()));
 
         compareQueryTraversalSegment(g.V().has("age", P.gt(30)), db.find("{\"age\" : {\"$gt\" : 30}}"));

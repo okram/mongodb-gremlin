@@ -29,8 +29,16 @@ public final class MongoDBQueryStep extends ReducingBarrierStep<Path, JSONObject
         final JSONObject root = new JSONObject();
         JSONObject currentNode = root;
         for (final Object object : traverser.get()) {
-            if (object instanceof Map)
-                currentNode.putAll((Map) object);
+            if (object instanceof Map) {
+                for(final Map.Entry entry : (Set<Map.Entry>)((Map)object).entrySet()) {
+                    if(entry.getKey().equals(T.id))
+                        currentNode.put(T.id.getAccessor(),entry.getValue());
+                    else if(entry.getKey().equals(T.label))
+                        currentNode.put(T.label.getAccessor(),entry.getValue());
+                    else
+                        currentNode.put(entry.getKey(),entry.getValue());
+                }
+            }
             else if (object instanceof String)
                 currentNode.put(object, currentNode = new JSONObject());
         }

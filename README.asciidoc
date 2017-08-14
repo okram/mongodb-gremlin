@@ -1,17 +1,20 @@
 image::https://raw.githubusercontent.com/okram/mongodb-gremlin/73fb15f74d23a544d224e6a1f66e746bd3329e31/docs/images/mongodb-gremlin-logo.png[MongoDB-Gremlin]
 
 MongoDB-Gremlin
-^^^^^^^^^^^^^^^
+---------------
 
 MongoDB-Gremlin compiles MongoDB link:https://docs.mongodb.com/manual/tutorial/insert-documents/[insert] and
 link:https://docs.mongodb.com/manual/tutorial/query-documents/[query] documents to Gremlin bytecode. In doing so,
 JSON documents are embedded in the underlying Apache TinkerPop-enabled graph system.
 
 This project currently serves only as a proof-of-concept. It was created to provide a technical foundation to
-link:https://www.datastax.com/dev/blog/the-von-gremlin-architecture[The Von Gremlin Architecture] article.
+link:https://www.datastax.com/dev/blog/the-von-gremlin-architecture[The Von Gremlin Architecture] article. If anyone
+is interested in taking over this project and flushing out the remaining CRUD operations of MongoDB (e.g. delete and update),
+please feel free to do so. There are a few peculiarities that were introduced for the sake of providing a quick
+POC. These should be rectified in a more thorough implementation.
 
 JSON Graph Encoding
-+++++++++++++++++++
+~~~~~~~~~~~~~~~~~~~
 
 The graph-encoding of is as follows.
 
@@ -26,7 +29,7 @@ It is important to note that appropriate graph-based indices should be defined t
 retrieval based on the abstract structure defined above.
 
 Example Usage
-+++++++++++++
+~~~~~~~~~~~~~
 
 [source,groovy]
 ----
@@ -82,4 +85,4 @@ gremlin> db.find('{"name" : "Gremlin"}')
      [[~label:vertex,~id:2,name:Gremlin-Java,language:Java8],
       [~label:vertex,~id:6,name:Gremlin-Python,language:Python],
       [~label:vertex,~id:10,name:Ogre,language:Clojure]]]
----
+----

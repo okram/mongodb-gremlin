@@ -96,8 +96,6 @@ it is possible to use `GraphTraversal` to query the graph structure as well.
 ----
 gremlin> g = graph.traversal()
 ==>graphtraversalsource[tinkergraph[vertices:4 edges:3], standard]
-gremlin> g.V().has('name','Gremlin').
-......1>            out('languages').has('name','Ogre').
-......2>            values('language')
+gremlin> g.V().has('name','Gremlin').out('languages').has('name','Ogre').values('language')
 ==>Clojure
 ----

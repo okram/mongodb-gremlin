@@ -15,6 +15,9 @@ MongoDB (e.g. delete and update), please feel free to do so. There are a few pec
 the sake of providing a quick POC. These should be rectified in a more thorough implementation and can be discussed
 with the interested developer.
 
+*NOTE*: Please see link:https://github.com/twilmes/sql-gremlin[SQL-Gremlin] and link:https://github.com/dkuppitz/sparql-gremlin[SPARQL-Gremlin]
+for other examples of using common data structures and query languages with Gremlin.
+
 JSON Graph Encoding
 ~~~~~~~~~~~~~~~~~~~
 

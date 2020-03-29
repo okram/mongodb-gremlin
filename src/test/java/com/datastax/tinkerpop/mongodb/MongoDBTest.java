@@ -1,6 +1,7 @@
 package com.datastax.tinkerpop.mongodb;
 
 import org.apache.tinkerpop.gremlin.process.traversal.P;
+import org.apache.tinkerpop.gremlin.process.traversal.Step;
 import org.apache.tinkerpop.gremlin.process.traversal.Traversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.Graph;
@@ -58,7 +59,9 @@ public class MongoDBTest {
         gremlinTraversal.iterate();
         mongoTraversal.iterate();
         for (int i = 0; i < mongoTraversal.asAdmin().getSteps().size() - 1; i++) {
-            assertEquals(mongoTraversal.asAdmin().getSteps().get(i), gremlinTraversal.asAdmin().getSteps().get(i));
+            Step mongoStep = mongoTraversal.asAdmin().getSteps().get(i);
+            Step gremlinStep = gremlinTraversal.asAdmin().getSteps().get(i);
+            assertEquals(gremlinStep,mongoStep);
         }
     }
 

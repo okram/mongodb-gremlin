@@ -25,7 +25,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.datastax.tinkerpop</groupId>
     <artifactId>mongodb-gremlin</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <version>0.2.0</version>
     <name>MongoDB-Gremlin: Compiler for MongoDB to the Gremlin Traversal Machine</name>
     <organization>
         <name>DataStax</name>
@@ -44,7 +44,7 @@
         <commons-cli.version>1.3.1</commons-cli.version>
         <commons-io.version>2.4</commons-io.version>
         <junit.version>4.12</junit.version>
-        <tinkerpop.version>3.3.0-SNAPSHOT</tinkerpop.version>
+        <tinkerpop.version>3.4.6</tinkerpop.version>
         <query.dir>src/test/resources/mongodb/queries</query.dir>
     </properties>
 

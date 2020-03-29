@@ -63,6 +63,9 @@ public final class MongoDBStrategy extends AbstractTraversalStrategy<TraversalSt
 
         // PROCESS INSERT JSON OBJECT //
         if (type.equals("insert")) {
+            // which one of these is needed?
+            // Traversal<?,String> vertexLabelTraversal=null;
+            // String vertexLabel=null;
             traversal.addStep(new AddVertexStartStep(traversal, null)).as("a");
             insertMap(query, traversal);
             traversal.select("a").id().asAdmin().addStep(new MongoDBInsertStep(traversal));
